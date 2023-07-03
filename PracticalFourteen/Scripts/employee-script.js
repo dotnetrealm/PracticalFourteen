@@ -18,6 +18,20 @@
         return year + "-" + month + "-" + day;
     }
 
+    const resetListners = () => {
+        Array.from($(".viewEmployee")).forEach((ele) => {
+            $(ele).on("click", (e) => viewEmployee(e))
+        })
+
+        Array.from($(".editEmployee")).forEach((ele) => {
+            $(ele).on("click", (e) => editEmployee(e))
+        })
+
+        Array.from($(".deleteEmployee")).forEach((ele) => {
+            $(ele).on("click", (e) => deleteEmployee(e))
+        })
+    }
+
     //generate toast message
     const makeToast = (message) => {
         var url = 'Toast/Index?message=' + encodeURIComponent(message); 
@@ -64,6 +78,7 @@
 
                             $("#EmployeeDataTable tbody").append(row);
                             $("#DisplaySection").empty();
+                            resetListners();
                             makeToast("Employee updated successfully");
                         }
                         else {
@@ -103,20 +118,12 @@
         $("#EmployeeData").load("Employee/GetAllEmployees", () => {
 
             $("#Search").on("keyup", (e) => {
-                $("#EmployeeData").load("Employee/Search?q=" + encodeURIComponent(e.target.value));
+                $("#EmployeeData").load("Employee/Search?q=" + encodeURIComponent(e.target.value), () => {
+                    resetListners();
+                });
             })
-
-            Array.from($(".viewEmployee")).forEach((ele) => {
-                $(ele).on("click", (e) => viewEmployee(e))
-            })
-
-            Array.from($(".editEmployee")).forEach((ele) => {
-                $(ele).on("click", (e)=> editEmployee(e))
-            })
-
-            Array.from($(".deleteEmployee")).forEach((ele) => {
-                $(ele).on("click", (e) => deleteEmployee(e))
-            })
+            resetListners();
+            
         });
         makeToast("Employees loaded successfully.")
     }
@@ -140,6 +147,7 @@
                             $("#DisplaySection").empty();
                             makeToast("Employee Created successfully");
                             noUserCheck();
+                            resetListners();
                         }
                         else {
                             $("#ValidationSummary").removeClass("d-none");
