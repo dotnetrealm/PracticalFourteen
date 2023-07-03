@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Employee Page";
+}
+
+<div class="text-center mt-5 mb-3">
+    <h1>Employee Management</h1>
+</div>
+
+<button class="btn btn-outline-dark mb-3" id="CreateEmployee"><i class="fa fa-plus"></i> Create new User</button>
+
+<div id="DisplaySection"></div>
+<hr />
+<div class="w-100">
+    <input class="form-control w-100" type="search" placeholder="Search" aria-label="Search" id="Search">
+</div>
+<hr />
+
+<div class="container">
+    
+    @*user loads here*@
+    <div id="EmployeeData"></div>
+
+    @*container for toast messages*@
+    <div id="ToastDisplay"></div>
+
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/employee-script.js"></script>
+}

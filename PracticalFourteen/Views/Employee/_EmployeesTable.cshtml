@@ -1,0 +1,31 @@
+﻿@using PracticalFourteen.Domain.Entities;
+@model IEnumerable<EmployeeModel>
+
+<table class="table text-center" id="EmployeeDataTable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">@Html.LabelFor(e => e.First().Name)</th>
+            <th scope="col">@Html.LabelFor(e => e.First().DOB)</th>
+            <th scope="col">@Html.LabelFor(e => e.First().Age)</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="text-center">
+        @*displays user data*@
+        @foreach (var employee in Model)
+        {
+            <tr id="@employee.Id">
+                <th scope="row">@Html.DisplayFor(e => @employee.Id)</th>
+                <td>@Html.DisplayFor(e => @employee.Name)</td>
+                <td>@Html.DisplayFor(e => @employee.DOB)</td>
+                <td>@Html.DisplayFor(e => @employee.Age)</td>
+                <td>
+                    <button class="btn btn-sm viewEmployee"><i class="fa fa-eye"></i></button>
+                    <button class="btn btn-sm editEmployee"><i class="fa fa-user-pen"></i></button>
+                    <button class="btn btn-sm deleteEmployee"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
