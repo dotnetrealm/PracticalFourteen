@@ -2,7 +2,7 @@
 using PracticalFourteen.Domain.Entities;
 using PracticalFourteen.Domain.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -12,20 +12,22 @@ namespace PracticalFourteen.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+
         public EmployeeController()
         {
             _employeeRepository = new EmployeeRepository();
         }
 
+        [HttpGet]
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAllEmployees()
+        public async Task<ActionResult> GetEmployees(string q = "", int page = 1)
         {
-            IEnumerable<EmployeeModel> employees = await _employeeRepository.GetAllEmployeesAsync();
+            PagedResult<EmployeeModel> employees = await _employeeRepository.GetEmployeesAsync(page, q);
             return PartialView("_EmployeesTable", employees);
         }
 
@@ -44,7 +46,7 @@ namespace PracticalFourteen.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
             return PartialView("_Create", new EmployeeModel());
         }
@@ -59,11 +61,11 @@ namespace PracticalFourteen.Controllers
                     string messages = string.Join("\n", ModelState.Values
                                         .SelectMany(x => x.Errors)
                                         .Select(x => x.ErrorMessage));
-                    throw new Exception(messages);
+                    throw new ValidationException(messages);
                 }
 
                 EmployeeModel data = await _employeeRepository.InsertEmployeeAsync(employee);
-                return Json(new { Result = "OK", Data = new { employee= data } });
+                return Json(new { Result = "OK", Data = new { employee = data } });
             }
             catch (Exception ex)
             {
@@ -81,10 +83,10 @@ namespace PracticalFourteen.Controllers
                     string messages = string.Join("\n", ModelState.Values
                                         .SelectMany(x => x.Errors)
                                         .Select(x => x.ErrorMessage));
-                    throw new Exception(messages);
+                    throw new ValidationException(messages);
                 }
 
-                var data = await _employeeRepository.UpdateEmployeeAsync(id, employee);
+                await _employeeRepository.UpdateEmployeeAsync(id, employee);
                 employee.Id = id;
                 return Json(new { Result = "OK", Data = new { employee } });
             }
@@ -100,13 +102,6 @@ namespace PracticalFourteen.Controllers
             var data = await _employeeRepository.DeleteEmployeeAsync(id);
             if (data) return Json(new { Result = "OK" });
             else return Json(new { Result = "Error" });
-        }
-
-        [HttpGet]
-        public async Task<PartialViewResult> search(string q)
-        {
-            IEnumerable<EmployeeModel> employees = await _employeeRepository.SearchEmployeeByName(q);
-            return PartialView("_EmployeesTable", employees);
         }
     }
 }

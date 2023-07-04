@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\EmployeeModel.cs" />
+    <Compile Include="Entities\PagedResult.cs" />
     <Compile Include="Interfaces\IEmployeeRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

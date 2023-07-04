@@ -1,5 +1,4 @@
 ﻿using PracticalFourteen.Domain.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PracticalFourteen.Domain.Interfaces
@@ -7,10 +6,12 @@ namespace PracticalFourteen.Domain.Interfaces
     public interface IEmployeeRepository
     {
         /// <summary>
-        /// returns all employee
+        /// returns employee by given page and query
         /// </summary>
+        /// <param name="page">Page number</param>
+        /// <param name="q">string that will find matches</param>
         /// <returns></returns>
-        Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync();
+        Task<PagedResult<EmployeeModel>> GetEmployeesAsync(int page, string q);
 
         /// <summary>
         /// Get employee by id
@@ -40,11 +41,5 @@ namespace PracticalFourteen.Domain.Interfaces
         /// <param name="id">Employee Id</param>
         /// <returns></returns>
         Task<bool> DeleteEmployeeAsync(int id);
-
-        /// <summary>
-        /// returns all employee whose name like given query
-        /// </summary>
-        /// <returns></returns>
-        Task<IEnumerable<EmployeeModel>> SearchEmployeeByName(string name);
     }
 }

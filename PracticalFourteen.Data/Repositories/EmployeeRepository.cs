@@ -10,21 +10,32 @@ namespace PracticalFourteen.Data.Repositories
     public class EmployeeRepository : IEmployeeRepository
     {
         readonly EmployeeDBFirstEntities _db;
+
         public EmployeeRepository()
         {
             _db = new EmployeeDBFirstEntities();
         }
 
-        public async Task<IEnumerable<EmployeeModel>> GetAllEmployeesAsync()
+        public async Task<PagedResult<EmployeeModel>> GetEmployeesAsync(int page, string q)
         {
-            IEnumerable<EmployeeModel> employees = await _db.Employees.Select(emp => new EmployeeModel()
-            {
-                Id = emp.Id,
-                Name = emp.Name,
-                DOB = emp.DOB,
-                Age = emp.Age
-            }).ToListAsync();
-            return employees;
+            // Use the provided page number or default to 1
+            int pageNumber = page;
+            // Number of employees per page
+            int pageSize = 10;
+            var totalCount = await _db.Employees.CountAsync();
+            List<EmployeeModel> employees = await _db.Employees.Where((e) => e.Name.Contains(q))
+                                           .OrderBy(e => e.Id)
+                                           .Skip((pageNumber - 1) * pageSize)
+                                           .Take(pageSize).Select(emp => new EmployeeModel()
+                                           {
+                                               Id = emp.Id,
+                                               Name = emp.Name,
+                                               DOB = emp.DOB,
+                                               Age = emp.Age
+                                           }).ToListAsync();
+
+            var pagedResult = new PagedResult<EmployeeModel>(employees, totalCount, pageNumber, pageSize);
+            return pagedResult;
         }
 
         public async Task<EmployeeModel> GetEmployeeByIdAsync(int id)
@@ -38,6 +49,7 @@ namespace PracticalFourteen.Data.Repositories
             }).FirstAsync();
             return employee;
         }
+
         public async Task<EmployeeModel> InsertEmployeeAsync(EmployeeModel employee)
         {
             Employee emp = new Employee()
@@ -84,18 +96,6 @@ namespace PracticalFourteen.Data.Repositories
             _db.Employees.Remove(data);
             await _db.SaveChangesAsync();
             return true;
-        }
-
-        public async Task<IEnumerable<EmployeeModel>> SearchEmployeeByName(string query)
-        {
-            IEnumerable<EmployeeModel> employees = await _db.Employees.Where(e=>e.Name.Contains(query)).Select(emp => new EmployeeModel()
-            {
-                Id = emp.Id,
-                Name = emp.Name,
-                DOB = emp.DOB,
-                Age = emp.Age
-            }).ToListAsync();
-            return employees;
         }
     }
 }

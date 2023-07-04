@@ -1,19 +1,19 @@
 ﻿@using PracticalFourteen.Domain.Entities;
-@model IEnumerable<EmployeeModel>
+@model PagedResult<EmployeeModel>
 
 <table class="table text-center" id="EmployeeDataTable">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">@Html.LabelFor(e => e.First().Name)</th>
-            <th scope="col">@Html.LabelFor(e => e.First().DOB)</th>
-            <th scope="col">@Html.LabelFor(e => e.First().Age)</th>
+            <th scope="col">@Html.LabelFor(e => e.Items.First().Name)</th>
+            <th scope="col">@Html.LabelFor(e => e.Items.First().DOB)</th>
+            <th scope="col">@Html.LabelFor(e => e.Items.First().Age)</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody class="text-center">
         @*displays user data*@
-        @foreach (var employee in Model)
+        @foreach (var employee in Model.Items)
         {
             <tr id="@employee.Id">
                 <th scope="row">@Html.DisplayFor(e => @employee.Id)</th>
@@ -29,3 +29,44 @@
         }
     </tbody>
 </table>
+
+<div class="pagination d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (Model.TotalCount > Model.PageSize)
+            {
+                //Count numbers of pages to display 
+                int totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+                int maxVisiblePages = 5;
+
+                int startPage = Math.Max(1, Model.PageNumber - (maxVisiblePages / 2));
+                int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+
+                //Next button visiblity configuration
+                if (Model.PageNumber > 1)
+                {
+                    <li class="page-item"><button class="PaginationBtn page-link" data-page=@(Model.PageNumber - 1)>Previous</button></li>
+                }
+
+                //Page number configuration
+                for (int page = startPage; page <= endPage; page++)
+                {
+                    if (page == Model.PageNumber)
+                    {
+                        <li class="page-item"><button class="page-link bg-primary text-white" id="ActivePage" data-page=@page>@page</button></li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><button class="PaginationBtn page-link" data-page=@page>@page</button></li>
+                    }
+                }
+
+                //Previous button visiblity setting
+                if (Model.PageNumber < totalPages)
+                {
+                    <li class="page-item"><button class="PaginationBtn page-link" data-page=@(Model.PageNumber + 1)>Next</button></li>
+                }
+            }
+        </ul>
+    </nav>
+</div>
